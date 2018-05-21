@@ -5,13 +5,29 @@ import im from 'imagemagick'
 import Q from 'q'
 import fs from 'fs-extra'
 import { last } from 'lodash'
+import { withFilter } from 'graphql-subscriptions'
+import pubSub from '../pubSub'
+
+const ORDER_STATUS_CHANGED = 'orderStatusChanged'
 
 export default {
+  Subscription: {
+    orderStatusChanged: {
+      subscribe: withFilter(
+        () => pubSub.asyncIterator(ORDER_STATUS_CHANGED),
+        ({ orderStatusChanged: { id } }, { orderId }) => id === orderId,
+      ),
+    },
+  },
   Mutation: {
     changeOrderStatus: async (_, { orderId, status }, { Orders }) => {
       const order = await Orders.findOne({ id: orderId })
       if (!order) throw new Error(`order ${orderId} is not found`)
       await Orders.update({ id: orderId }, { $set: { status } })
+      if (status !== order.status) {
+        order.status = status
+        pubSub.publish(ORDER_STATUS_CHANGED, { orderStatusChanged: order })
+      }
       return true
     },
     createPDF: async (_, { orderId }, { Orders }) => {

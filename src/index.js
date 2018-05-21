@@ -9,7 +9,10 @@ import fileUpload from 'express-fileupload'
 import path from 'path'
 import { exec } from 'child_process'
 import fs from 'fs'
+import { createServer } from 'http'
 import { request } from 'graphql-request'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
+import { execute, subscribe } from 'graphql'
 import { Order, OrderResolver } from './order'
 
 (async () => {
@@ -20,6 +23,7 @@ import { Order, OrderResolver } from './order'
     scalar JSON
     type Query { _: Boolean }
     type Mutation { _: Boolean }
+    type Subscription { _: Boolean }
   `
   const app = express()
   const schema = makeExecutableSchema({
@@ -55,8 +59,20 @@ import { Order, OrderResolver } from './order'
       Orders: db.collection('orders'),
     },
   }))
-  app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }))
-  app.listen(PORT, () => {
+  app.use('/graphiql', graphiqlExpress({
+    endpointURL: '/graphql',
+    subscriptionsEndpoint: `ws://localhost:${PORT}/subscription`,
+  }))
+  const server = createServer(app)
+  SubscriptionServer.create({
+    schema,
+    execute,
+    subscribe,
+  }, {
+    server,
+    graphql: '/subscription',
+  })
+  server.listen(PORT, () => {
     console.log(`🚀 Server ready at port ${PORT}`)
   })
 })()

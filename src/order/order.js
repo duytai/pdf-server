@@ -38,4 +38,7 @@ export default `
   extend type Query {
     ordersByUser(ids: [ID!]): [Order!]!
   }
+  extend type Subscription {
+    orderStatusChanged(orderId: ID!): Order
+  }
 `
