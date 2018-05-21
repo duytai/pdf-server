@@ -8,6 +8,12 @@ import { last } from 'lodash'
 
 export default {
   Mutation: {
+    changeOrderStatus: async (_, { orderId, status }, { Orders }) => {
+      const order = await Orders.findOne({ id: orderId })
+      if (!order) throw new Error(`order ${orderId} is not found`)
+      await Orders.update({ id: orderId }, { $set: { status } })
+      return true
+    },
     createPDF: async (_, { orderId }, { Orders }) => {
       const order = await Orders.findOne({ id: orderId })
       if (!order) throw new Error(`order ${orderId} is not found`)
@@ -84,6 +90,7 @@ export default {
         doc.end()
       }
       fs.remove(inputFolder)
+      return true
     },
     createOrder: async (_, { meta }, { Orders }) => {
       const { cartItems, delivery, services } = JSON.parse(meta)
@@ -95,6 +102,7 @@ export default {
         createdAt: Date.now(),
         updatedAt: Date.now(),
         services,
+        status: 'NEW',
       })
       return Orders.findOne({ id })
     },

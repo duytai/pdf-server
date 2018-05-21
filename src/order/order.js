@@ -1,4 +1,12 @@
 export default `
+  enum OrderStatus {
+    NEW
+    ORDERED
+    PAIDED
+    PRINTED
+    DELIVERED
+    DONE
+  }
   type Order {
     id: ID!
     createdAt: Float 
@@ -6,6 +14,7 @@ export default `
     delivery: Delivery!
     cartItems: [CartItem!]!
     services: [JSON!]!
+    status: OrderStatus! 
   } 
   type CartItem {
     pages: [JSON!]!
@@ -23,7 +32,8 @@ export default `
   }
   extend type Mutation {
     createOrder(meta: String!): Order 
-    createPDF(orderId: ID!): Boolean
+    createPDF(orderId: ID!): Boolean!
+    changeOrderStatus(orderId: ID!, status: OrderStatus!): Boolean!
   }
   extend type Query {
     ordersByUser(ids: [ID!]): [Order!]!
