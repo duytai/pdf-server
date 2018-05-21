@@ -39,6 +39,6 @@ export default `
     ordersByUser(ids: [ID!]): [Order!]!
   }
   extend type Subscription {
-    orderStatusChanged(orderId: ID!): Order
+    orderChanged(id: ID!): Order
   }
 `

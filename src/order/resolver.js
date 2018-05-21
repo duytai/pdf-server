@@ -8,14 +8,14 @@ import { last } from 'lodash'
 import { withFilter } from 'graphql-subscriptions'
 import pubSub from '../pubSub'
 
-const ORDER_STATUS_CHANGED = 'orderStatusChanged'
+const ORDER_CHANGED = 'orderChanged'
 
 export default {
   Subscription: {
-    orderStatusChanged: {
+    orderChanged: {
       subscribe: withFilter(
-        () => pubSub.asyncIterator(ORDER_STATUS_CHANGED),
-        ({ orderStatusChanged: { id } }, { orderId }) => id === orderId,
+        () => pubSub.asyncIterator(ORDER_CHANGED),
+        ({ orderChanged: { id } }, { id: orderId }) => id === orderId,
       ),
     },
   },
@@ -26,7 +26,7 @@ export default {
       await Orders.update({ id: orderId }, { $set: { status } })
       if (status !== order.status) {
         order.status = status
-        pubSub.publish(ORDER_STATUS_CHANGED, { orderStatusChanged: order })
+        pubSub.publish(ORDER_CHANGED, { orderChanged: order })
       }
       return true
     },
