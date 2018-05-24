@@ -125,7 +125,9 @@ export default {
   },
   Query: {
     ordersByUser: async (_, { ids }, { Orders }) => {
-      return Orders.find({ 'services.id': { $in: ids } }).toArray()
+      return Orders.find({ 'services.id': { $in: ids } })
+        .sort({ createdAt: -1 })
+        .toArray()
     },
   },
 }
