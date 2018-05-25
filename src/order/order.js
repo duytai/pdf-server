@@ -15,6 +15,7 @@ export default `
     cartItems: [CartItem!]!
     services: [JSON!]!
     status: OrderStatus! 
+    discount: Discount!
   } 
   type CartItem {
     pages: [JSON!]!

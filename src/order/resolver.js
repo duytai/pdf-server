@@ -109,7 +109,12 @@ export default {
       return true
     },
     createOrder: async (_, { meta }, { Orders }) => {
-      const { cartItems, delivery, services } = JSON.parse(meta)
+      const {
+        cartItems,
+        delivery,
+        services,
+        discount,
+      } = JSON.parse(meta)
       const id = uuid()
       await Orders.insert({
         id,
@@ -119,6 +124,7 @@ export default {
         updatedAt: Date.now(),
         services,
         status: 'NEW',
+        discount,
       })
       return Orders.findOne({ id })
     },
