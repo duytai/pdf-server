@@ -15,6 +15,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { execute, subscribe } from 'graphql'
 import { Order, OrderResolver } from './order'
 import { Discount, DiscountResolver } from './discount'
+import { Notification, NotificationResolver } from './notification'
 
 (async () => {
   const { SETTINGS } = process.env
@@ -32,8 +33,9 @@ import { Discount, DiscountResolver } from './discount'
       Empty,
       Order,
       Discount,
+      Notification,
     ],
-    resolvers: merge(OrderResolver, DiscountResolver, { JSON: GraphQLJSON }),
+    resolvers: merge(OrderResolver, DiscountResolver, NotificationResolver, { JSON: GraphQLJSON }),
   })
   app.use(fileUpload())
   app.post('/upload', (req, res) => {
@@ -60,6 +62,7 @@ import { Discount, DiscountResolver } from './discount'
     context: {
       Orders: db.collection('orders'),
       Discounts: db.collection('discounts'),
+      Notifications: db.collection('notifications'),
     },
   }))
   app.use('/graphiql', graphiqlExpress({
