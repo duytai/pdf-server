@@ -10,6 +10,8 @@ export default `
     imageURL: String!
     message: String!
     status: NotificationStatus!
+    createdAt: Float!
+    updatedAt: Float!
   }
   type NotificationConnection {
     totalCount: Int!
