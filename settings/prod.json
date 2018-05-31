@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "pdf-server",
+      "script": "index.js",
+      "env": {
+        "SETTINGS": {
+          "MONGO_URL": "mongodb://localhost:27017/molli"
+        }
+      }
+    }
+  ]
+}
