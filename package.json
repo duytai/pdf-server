@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "SETTINGS=$(cat settings/dev.json) nodemon -r babel-register -r babel-polyfill src/index.js"
+    "start": "SETTINGS=$(cat settings/dev.json) node index.js"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",
