@@ -31,13 +31,18 @@ export default `
     phone: String!
     ward: String!
   }
+  type OrderConnection {
+    totalCount: Int!
+    orders: [Order!]!
+  }
   extend type Mutation {
     createOrder(meta: String!): Order 
     createPDF(orderId: ID!): Boolean!
-    changeOrderStatus(orderId: ID!, status: OrderStatus!): Boolean!
+    changeOrderStatus(orderId: ID!, status: OrderStatus!): Order 
   }
   extend type Query {
     ordersByUser(ids: [ID!]): [Order!]!
+    orders(filter: OrderFilter!, skip: Int, limit: Int): OrderConnection! 
   }
   extend type Subscription {
     orderChanged(id: ID!): Order

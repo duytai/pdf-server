@@ -23,12 +23,12 @@ export default {
     changeOrderStatus: async (_, { orderId, status }, { Orders }) => {
       const order = await Orders.findOne({ id: orderId })
       if (!order) throw new Error(`order ${orderId} is not found`)
-      await Orders.update({ id: orderId }, { $set: { status } })
+      await Orders.update({ id: orderId }, { $set: { status, updatedAt: Date.now() } })
       if (status !== order.status) {
         order.status = status
         pubSub.publish(ORDER_CHANGED, { orderChanged: order })
       }
-      return true
+      return Orders.findOne({ id: orderId })
     },
     createPDF: async (_, { orderId }, { Orders }) => {
       const order = await Orders.findOne({ id: orderId })
@@ -134,6 +134,21 @@ export default {
       return Orders.find({ 'services.id': { $in: ids } })
         .sort({ createdAt: -1 })
         .toArray()
+    },
+    orders: async (_, { filter, skip, limit }, { Orders }) => {
+      const skipOp = skip >= 0 ? skip : 0
+      const limitOp = limit >= 0 ? limit : 10 
+      const totalCount = Orders.count(filter)
+      const orders = Orders
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skipOp)
+        .limit(limitOp)
+        .toArray()
+      return {
+        totalCount,
+        orders,
+      }
     },
   },
 }

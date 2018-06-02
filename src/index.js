@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser'
+import cors from 'cors'
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 import { makeExecutableSchema } from 'graphql-tools'
 import { merge } from 'lodash'
@@ -13,7 +14,7 @@ import { createServer } from 'http'
 import { request } from 'graphql-request'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { execute, subscribe } from 'graphql'
-import { Order, OrderResolver } from './order'
+import { Order, OrderResolver, OrderInput } from './order'
 import { Discount, DiscountResolver } from './discount'
 import { Notification, NotificationResolver } from './notification'
 
@@ -32,12 +33,15 @@ import { Notification, NotificationResolver } from './notification'
     typeDefs: [
       Empty,
       Order,
+      OrderInput,
       Discount,
       Notification,
     ],
     resolvers: merge(OrderResolver, DiscountResolver, NotificationResolver, { JSON: GraphQLJSON }),
   })
+  app.use(cors())
   app.use(fileUpload())
+  app.use('/products', express.static('products'))
   app.post('/upload', (req, res) => {
     if (!req.files) return res.status(400).send('No files were uploaded')
     const { name: orderId } = req.files.order
@@ -46,7 +50,7 @@ import { Notification, NotificationResolver } from './notification'
     req.files.order.mv(orderPath, (error) => {
       if (error) return res.send(error.message)
       exec(`unzip ${orderPath} -d ${orderFolder}`, () => {
-        fs.unlinkSync(orderPath)
+        fs.unlink(orderPath, () => console.log(`Remove ${orderPath}`))
         const createPDF = `
           mutation {
             createPDF(orderId: "${orderId}")
