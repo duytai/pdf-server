@@ -44,7 +44,8 @@ import { Notification, NotificationResolver } from './notification'
   app.use('/products', express.static('products'))
   app.post('/upload', (req, res) => {
     if (!req.files) return res.status(400).send('No files were uploaded')
-    const { name: orderId } = req.files.order
+    const { name } = req.files.order
+    const orderId = name.replace('.zip', '')
     const orderPath = path.join(__dirname, `../orders/${orderId}.zip`)
     const orderFolder = path.join(__dirname, `../orders/${orderId}`)
     req.files.order.mv(orderPath, (error) => {
