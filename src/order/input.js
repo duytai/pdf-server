@@ -1,5 +1,5 @@
 export default `
   input OrderFilter {
-    id: ID
+    id_startsWith: String
   }
 `

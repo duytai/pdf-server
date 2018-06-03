@@ -136,11 +136,18 @@ export default {
         .toArray()
     },
     orders: async (_, { filter, skip, limit }, { Orders }) => {
+      const query = {}
       const skipOp = skip >= 0 ? skip : 0
-      const limitOp = limit >= 0 ? limit : 10 
-      const totalCount = Orders.count(filter)
+      const limitOp = limit >= 0 ? limit : 10
+      const { id_startsWith } = filter
+      if (id_startsWith) {
+        query.id = {
+          $regex: new RegExp(`^${id_startsWith}`, 'gi')
+        }
+      }
+      const totalCount = Orders.count(query)
       const orders = Orders
-        .find(filter)
+        .find(query)
         .sort({ createdAt: -1 })
         .skip(skipOp)
         .limit(limitOp)
