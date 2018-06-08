@@ -15,7 +15,7 @@ import { request } from 'graphql-request'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { execute, subscribe } from 'graphql'
 import { Order, OrderResolver, OrderInput } from './order'
-import { Discount, DiscountResolver } from './discount'
+import { Discount, DiscountResolver, DiscountInput } from './discount'
 import { Notification, NotificationResolver } from './notification'
 
 (async () => {
@@ -35,6 +35,7 @@ import { Notification, NotificationResolver } from './notification'
       Order,
       OrderInput,
       Discount,
+      DiscountInput,
       Notification,
     ],
     resolvers: merge(OrderResolver, DiscountResolver, NotificationResolver, { JSON: GraphQLJSON }),

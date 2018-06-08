@@ -19,7 +19,15 @@ export default `
     createdAt: Float!
     updatedAt: Float!
   }
+  type DiscountConnection {
+    totalCount: Int!
+    discounts: [Discount!]!
+  }
+  extend type Query {
+    discounts(filter: DiscountFilter!, skip: Int, limit: Int): DiscountConnection!
+  }
   extend type Mutation {
     discount(code: ID!, products: [ProductType!]!): Discount
+    createDiscount(input: DiscountInput!): Discount
   }
 `

@@ -6,6 +6,7 @@ import Q from 'q'
 import fs from 'fs-extra'
 import { last } from 'lodash'
 import { withFilter } from 'graphql-subscriptions'
+import { filterToMongoQuery } from '../lib'
 import pubSub from '../pubSub'
 
 const ORDER_CHANGED = 'orderChanged'
@@ -136,15 +137,9 @@ export default {
         .toArray()
     },
     orders: async (_, { filter, skip, limit }, { Orders }) => {
-      const query = {}
+      const query = filterToMongoQuery(filter)
       const skipOp = skip >= 0 ? skip : 0
       const limitOp = limit >= 0 ? limit : 10
-      const { id_startsWith } = filter
-      if (id_startsWith) {
-        query.id = {
-          $regex: new RegExp(`^${id_startsWith}`, 'gi')
-        }
-      }
       const totalCount = Orders.count(query)
       const orders = Orders
         .find(query)
