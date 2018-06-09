@@ -1,5 +1,6 @@
 import uuid from 'uuid/v1'
 import { filterToMongoQuery } from '../lib'
+import { omit } from 'lodash'
 
 export default {
   Query: {
@@ -21,6 +22,12 @@ export default {
     },
   },
   Mutation: {
+    updateDiscount: async (_, { input }, { Discounts }) => {
+      const { id } = input
+      const discount = omit(input, ['id'])
+      await Discounts.update({ id }, { $set: discount })
+      return Discounts.findOne({ id })
+    },
     createDiscount: async (_, { input }, { Discounts }) => {
       const { code } = input
       if (await Discounts.findOne({ code })) throw new Error(`code ${code} is not avaliable`)

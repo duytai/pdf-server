@@ -2,6 +2,10 @@ export default `
   input DiscountFilter {
     code_startsWith: ID!
   }
+  input UpdateDiscountInput {
+    id: ID!
+    isValid: Boolean
+  }
   input DiscountInput {
     code: ID!
     percent: Float!

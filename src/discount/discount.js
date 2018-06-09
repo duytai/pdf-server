@@ -29,5 +29,6 @@ export default `
   extend type Mutation {
     discount(code: ID!, products: [ProductType!]!): Discount
     createDiscount(input: DiscountInput!): Discount
+    updateDiscount(input: UpdateDiscountInput!): Discount
   }
 `
